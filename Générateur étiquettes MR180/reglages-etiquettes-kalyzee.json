@@ -1,0 +1,17 @@
+{
+  "type": "kalyzee-label-settings",
+  "version": 1,
+  "savedAt": "2026-06-30T14:32:36.065Z",
+  "settings": {
+    "marginTop": -5,
+    "marginLeft": 4.2,
+    "gapX": 0,
+    "gapY": 8,
+    "labelWidth": 26,
+    "labelHeight": 61,
+    "printZoneWidth": 26,
+    "printZoneHeight": 21,
+    "fontMax": 8.2,
+    "fontMin": 5.2
+  }
+}

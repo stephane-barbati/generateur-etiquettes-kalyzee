@@ -1,0 +1,1299 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Planches d'étiquettes câbles Kalyzée</title>
+  <style>
+    :root {
+      --page-w: 215.9mm;
+      --page-h: 279.4mm;
+      --ink: #172033;
+      --muted: #667085;
+      --line: #d8dee8;
+      --panel: #ffffff;
+      --page-bg: #eef2f6;
+      --accent: #0f766e;
+      --accent-strong: #115e59;
+      --danger: #b42318;
+      --label-w: 26mm;
+      --label-h: 60mm;
+      --zone-w: 26mm;
+      --zone-h: 21mm;
+      --gap-x: 0mm;
+      --gap-y: 7mm;
+      --margin-top: 8.8mm;
+      --margin-left: 4.2mm;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--page-bg);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: minmax(330px, 390px) 1fr;
+      gap: 18px;
+      width: 100%;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .controls {
+      align-self: start;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 44px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: 19px;
+    }
+
+    h2 {
+      font-size: 14px;
+    }
+
+    .panel-body {
+      padding: 12px;
+    }
+
+    .hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .actions.three {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 7px 10px;
+      color: var(--ink);
+      background: #fff;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .button:hover {
+      border-color: #aeb8c8;
+      background: #f8fafc;
+    }
+
+    .button.primary {
+      border-color: var(--accent);
+      color: #fff;
+      background: var(--accent);
+    }
+
+    .button.primary:hover {
+      border-color: var(--accent-strong);
+      background: var(--accent-strong);
+    }
+
+    .button.danger {
+      color: var(--danger);
+    }
+
+    .button svg {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+      stroke-width: 2;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 96px;
+      gap: 8px 10px;
+      align-items: center;
+    }
+
+    .field-grid label,
+    .generator-grid label,
+    .csv-grid label,
+    .library-grid label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select {
+      min-height: 34px;
+      padding: 6px 8px;
+    }
+
+    input[type="number"]:focus,
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      outline: 2px solid rgba(15, 118, 110, 0.16);
+    }
+
+    .generator-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .generator-grid .wide {
+      grid-column: 1 / -1;
+    }
+
+    .csv-grid,
+    .library-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .csv-text,
+    .library-text,
+    .board-label-input {
+      min-height: 86px;
+      resize: vertical;
+      padding: 8px;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .csv-text,
+    .library-text {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .editor-list {
+      display: grid;
+      gap: 6px;
+      max-height: 360px;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .editor-row {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 7px;
+      align-items: start;
+    }
+
+    .editor-row span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border-radius: 6px;
+      color: var(--muted);
+      background: #f2f5f9;
+      font-size: 12px;
+    }
+
+    .label-editor {
+      min-height: 44px;
+      resize: vertical;
+      padding: 7px 8px;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .preview-wrap {
+      min-width: 0;
+      overflow: auto;
+      padding: 10px 0 20px;
+    }
+
+    .preview-topbar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .sheet {
+      position: relative;
+      width: var(--page-w);
+      height: var(--page-h);
+      margin: 0 auto;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 18px 44px rgba(15, 23, 42, 0.2);
+      transform-origin: top center;
+    }
+
+    .print-stack {
+      position: absolute;
+      top: 0;
+      left: -10000px;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .print-sheet {
+      position: relative;
+      width: var(--page-w);
+      height: var(--page-h);
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .page-edge {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border: 1px solid rgba(23, 32, 51, 0.16);
+    }
+
+    .label {
+      appearance: none;
+      position: absolute;
+      width: var(--label-w);
+      height: var(--label-h);
+      left: var(--x);
+      top: var(--y);
+      padding: 0;
+      border: 0;
+      color: inherit;
+      background: transparent;
+      font: inherit;
+    }
+
+    .label:focus-visible .print-zone {
+      outline: 0.35mm solid rgba(15, 118, 110, 0.48);
+      outline-offset: -0.35mm;
+    }
+
+    .print-zone {
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: var(--zone-w);
+      height: var(--zone-h);
+      overflow: hidden;
+      text-align: center;
+      color: #000;
+      font-weight: 600;
+      line-height: 1.08;
+      word-break: normal;
+      overflow-wrap: anywhere;
+      white-space: normal;
+      cursor: pointer;
+    }
+
+    .label-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      padding: 0.8mm 1mm;
+      font-size: var(--fit-size, 8pt);
+      line-height: 1.08;
+    }
+
+    .room-line {
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .cable-line {
+      font-weight: 600;
+    }
+
+    .calibration .label {
+      border: 0.2mm solid rgba(180, 35, 24, 0.42);
+      background:
+        repeating-linear-gradient(
+          135deg,
+          rgba(180, 35, 24, 0.08) 0,
+          rgba(180, 35, 24, 0.08) 1.2mm,
+          transparent 1.2mm,
+          transparent 3mm
+        );
+    }
+
+    .calibration .print-zone {
+      border: 0.25mm solid rgba(15, 118, 110, 0.78);
+      background:
+        repeating-linear-gradient(
+          45deg,
+          rgba(15, 118, 110, 0.11) 0,
+          rgba(15, 118, 110, 0.11) 1mm,
+          transparent 1mm,
+          transparent 2.6mm
+        );
+    }
+
+    .calibration .page-edge {
+      border-color: rgba(15, 118, 110, 0.45);
+    }
+
+    .status {
+      min-height: 18px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+
+    @media (max-width: 980px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        max-height: none;
+      }
+
+      .preview-topbar {
+        display: flex;
+      }
+    }
+
+    @page {
+      size: 215.9mm 279.4mm;
+      margin: 0;
+    }
+
+    @media print {
+      html,
+      body {
+        width: 215.9mm;
+        height: 279.4mm;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+      }
+
+      .app-shell {
+        display: block;
+        width: 215.9mm;
+        height: 279.4mm;
+        min-height: 0;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .controls,
+      .preview-topbar,
+      .page-edge {
+        display: none !important;
+      }
+
+      .preview-wrap {
+        display: block;
+        width: 215.9mm;
+        height: 279.4mm;
+        overflow: visible !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .sheet {
+        width: 215.9mm !important;
+        height: 279.4mm !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+        box-shadow: none !important;
+        transform: none !important;
+        background: #fff !important;
+      }
+
+      .print-stack {
+        display: none !important;
+      }
+
+      body.print-all .sheet {
+        display: none !important;
+      }
+
+      body.print-all .preview-wrap {
+        height: auto !important;
+      }
+
+      body.print-all .print-stack {
+        display: block !important;
+        position: static !important;
+        visibility: visible !important;
+        width: 215.9mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      body.print-all .print-sheet {
+        display: block !important;
+        width: 215.9mm !important;
+        height: 279.4mm !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+        background: #fff !important;
+        break-after: page;
+        page-break-after: always;
+      }
+
+      body.print-all .print-sheet:last-child {
+        break-after: auto;
+        page-break-after: auto;
+      }
+
+      .label,
+      .print-zone,
+      .label-text {
+        border: none !important;
+        background: none !important;
+        box-shadow: none !important;
+      }
+
+      .print-zone {
+        cursor: default;
+      }
+
+      body.print-calibration .label {
+        border: 0.2mm solid #000 !important;
+      }
+
+      body.print-calibration .print-zone {
+        border: 0.2mm dashed #000 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell" id="app">
+    <section class="controls" aria-label="Paramètres et édition">
+      <div class="panel">
+        <div class="panel-header">
+          <h1>Planches d'étiquettes Kalyzée</h1>
+        </div>
+        <div class="panel-body">
+          <div class="actions three">
+            <button class="button primary" id="printButton" type="button" title="Imprimer la page en texte seul">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+              Imprimer
+            </button>
+            <button class="button" id="printAllButton" type="button" title="Imprimer une planche par libellé de la bibliothèque">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/><path d="M9 17h6"/></svg>
+              Tout
+            </button>
+            <button class="button" id="calibrationButton" type="button" aria-pressed="true" title="Afficher ou masquer les repères à l'écran">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M4 4h6v6H4z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6H4z"/><path d="M14 14h6v6h-6z"/></svg>
+              Calibration
+            </button>
+          </div>
+          <p class="hint" style="margin-top:10px;">Une planche = un libellé répété 32 fois. La feuille imprimée sort en texte seul.</p>
+          <p class="status" id="status" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Planche</h2>
+        </div>
+        <div class="panel-body">
+          <div class="generator-grid">
+            <label class="wide">Libellé
+              <select id="labelPreset"></select>
+            </label>
+            <label class="wide">Texte imprimé
+              <textarea class="board-label-input" id="currentLabelInput" rows="3"></textarea>
+            </label>
+            <div class="actions wide">
+              <button class="button" id="fillBoardButton" type="button" title="Remplir la planche avec ce libellé">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 2v6"/><path d="M12 16v6"/><path d="M4.93 4.93l4.24 4.24"/><path d="M14.83 14.83l4.24 4.24"/><path d="M2 12h6"/><path d="M16 12h6"/><path d="M4.93 19.07l4.24-4.24"/><path d="M14.83 9.17l4.24-4.24"/></svg>
+                Remplir
+              </button>
+              <button class="button" id="nextLabelButton" type="button" title="Passer au libellé suivant">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                Suivant
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Réglages physiques</h2>
+          <button class="button" id="resetSettingsButton" type="button" title="Revenir aux valeurs par défaut">Défaut</button>
+        </div>
+        <div class="panel-body">
+          <div class="field-grid" id="settingsGrid"></div>
+          <div class="actions three" style="margin-top:10px;">
+            <button class="button" id="saveSettingsButton" type="button" title="Mémoriser ces réglages dans ce navigateur">Sauver</button>
+            <button class="button" id="exportSettingsButton" type="button" title="Télécharger les réglages physiques">Exporter</button>
+            <label class="button" title="Charger des réglages physiques">
+              Charger
+              <input id="settingsFileInput" type="file" accept=".json,application/json" hidden>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Import/export</h2>
+        </div>
+        <div class="panel-body csv-grid">
+          <div class="actions three">
+            <button class="button" id="exportCsvButton" type="button" title="Télécharger un CSV">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+              CSV
+            </button>
+            <button class="button" id="saveJsonButton" type="button" title="Télécharger le projet">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+              JSON
+            </button>
+            <label class="button" title="Ouvrir un CSV ou un JSON">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 21V9"/><path d="m17 14-5-5-5 5"/><path d="M5 3h14"/></svg>
+              Ouvrir
+              <input id="fileInput" type="file" accept=".csv,.json,text/csv,application/json" hidden>
+            </label>
+          </div>
+          <label>CSV bibliothèque, une ligne par libellé
+            <textarea class="csv-text" id="csvText" placeholder="Caméra tableau&#10;Caméra Intervenant&#10;USB IN Capture Card"></textarea>
+          </label>
+          <div class="actions">
+            <button class="button" id="importCsvTextButton" type="button">Importer texte</button>
+            <button class="button" id="copyCsvButton" type="button">Copier CSV</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Bibliothèque</h2>
+        </div>
+        <div class="panel-body library-grid">
+          <label>Un libellé par ligne
+            <textarea class="library-text" id="libraryText" rows="8"></textarea>
+          </label>
+          <div class="actions">
+            <button class="button" id="applyLibraryButton" type="button">Mettre à jour</button>
+            <button class="button danger" id="resetLibraryButton" type="button">Défaut</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="preview-wrap" aria-label="Aperçu feuille US Letter">
+      <div class="preview-topbar">
+        <span>Feuille US Letter, impression à 100 %</span>
+      </div>
+      <div class="sheet calibration" id="sheet">
+        <div class="page-edge"></div>
+      </div>
+      <div class="print-stack" id="printStack"></div>
+    </section>
+  </main>
+
+  <script>
+    const rows = 4;
+    const cols = 8;
+    const labelsPerPage = rows * cols;
+
+    const defaultCableLabels = [
+      'Caméra tableau',
+      'Caméra Intervenant',
+      'Caméra public',
+      'Micro',
+      'HDMI IN Intervenant',
+      'HDMI OUT VP',
+      'HDMI IN Console',
+      'USB IN Console',
+      'USB IN Capture Card',
+      'WAN',
+      'VLAN',
+      'PC Orchestrateur'
+    ];
+
+    const defaults = {
+      marginTop: 8.8,
+      marginLeft: 4.2,
+      gapX: 0,
+      gapY: 7,
+      labelWidth: 26,
+      labelHeight: 60,
+      printZoneWidth: 26,
+      printZoneHeight: 21,
+      fontMax: 8.2,
+      fontMin: 5.2
+    };
+
+    const settingFields = [
+      ['marginTop', 'Marge haute', 'mm'],
+      ['marginLeft', 'Marge gauche', 'mm'],
+      ['gapX', 'Espacement horizontal', 'mm'],
+      ['gapY', 'Espacement vertical', 'mm'],
+      ['labelWidth', 'Largeur étiquette', 'mm'],
+      ['labelHeight', 'Hauteur étiquette', 'mm'],
+      ['printZoneWidth', 'Largeur zone imprimable', 'mm'],
+      ['printZoneHeight', 'Hauteur zone imprimable', 'mm'],
+      ['fontMax', 'Police max', 'pt'],
+      ['fontMin', 'Police min', 'pt']
+    ];
+
+    const state = {
+      settings: { ...defaults },
+      library: [...defaultCableLabels],
+      currentLabel: defaultCableLabels[0],
+      labels: Array.from({ length: labelsPerPage }, () => defaultCableLabels[0]),
+      calibration: true
+    };
+
+    const sheet = document.getElementById('sheet');
+    const printStack = document.getElementById('printStack');
+    const settingsGrid = document.getElementById('settingsGrid');
+    const statusEl = document.getElementById('status');
+    const labelPreset = document.getElementById('labelPreset');
+    const currentLabelInput = document.getElementById('currentLabelInput');
+    const libraryText = document.getElementById('libraryText');
+
+    function fillBoard(label = state.currentLabel, message = '') {
+      state.currentLabel = normalizeLabel(label);
+      state.labels = Array.from({ length: labelsPerPage }, () => state.currentLabel);
+      renderAll();
+      setStatus(message || `Planche prête: "${state.currentLabel || 'libellé vide'}" répété 32 fois.`);
+      saveLocal();
+    }
+
+    function normalizeLabel(value) {
+      return String(value || '').replace(/\r\n/g, '\n').trim();
+    }
+
+    function uniqueLabels(labels) {
+      const seen = new Set();
+      return labels.map(normalizeLabel).filter((label) => {
+        if (!label || seen.has(label)) return false;
+        seen.add(label);
+        return true;
+      });
+    }
+
+    function labelsFromPayload(payload) {
+      if (Array.isArray(payload.library)) {
+        return uniqueLabels(payload.library);
+      }
+
+      if (Array.isArray(payload.labels)) {
+        return uniqueLabels(payload.labels.map((label) => {
+          const lines = normalizeLabel(label).split(/\n+/).map((line) => line.trim()).filter(Boolean);
+          if (lines[0] && /^SALLE\s+\d+/i.test(lines[0])) {
+            return lines.slice(1).join(' ');
+          }
+          return lines.join(' ');
+        }));
+      }
+
+      return [...defaultCableLabels];
+    }
+
+    function currentLibraryIndex() {
+      const index = state.library.findIndex((label) => label === state.currentLabel);
+      return index >= 0 ? index : 0;
+    }
+
+    function renderSettings() {
+      settingsGrid.innerHTML = '';
+      settingFields.forEach(([key, label, unit]) => {
+        const labelEl = document.createElement('label');
+        labelEl.setAttribute('for', `setting-${key}`);
+        labelEl.textContent = `${label} (${unit})`;
+
+        const input = document.createElement('input');
+        input.id = `setting-${key}`;
+        input.type = 'number';
+        input.step = '0.1';
+        input.value = state.settings[key];
+        input.addEventListener('input', () => {
+          const value = Number(input.value);
+          if (Number.isFinite(value)) {
+            state.settings[key] = value;
+            applySettings();
+            renderSheet();
+            saveLocal();
+          }
+        });
+
+        settingsGrid.append(labelEl, input);
+      });
+    }
+
+    function renderBoardControls() {
+      labelPreset.innerHTML = '';
+      state.library.forEach((label, index) => {
+        const option = document.createElement('option');
+        option.value = String(index);
+        option.textContent = label || '(vide)';
+        labelPreset.append(option);
+      });
+
+      if (!state.library.includes(state.currentLabel) && state.currentLabel) {
+        const option = document.createElement('option');
+        option.value = 'custom';
+        option.textContent = state.currentLabel;
+        labelPreset.append(option);
+        labelPreset.value = 'custom';
+      } else {
+        labelPreset.value = String(currentLibraryIndex());
+      }
+
+      currentLabelInput.value = state.currentLabel;
+      libraryText.value = state.library.join('\n');
+    }
+
+    function applySettings() {
+      const s = state.settings;
+      document.documentElement.style.setProperty('--margin-top', `${s.marginTop}mm`);
+      document.documentElement.style.setProperty('--margin-left', `${s.marginLeft}mm`);
+      document.documentElement.style.setProperty('--gap-x', `${s.gapX}mm`);
+      document.documentElement.style.setProperty('--gap-y', `${s.gapY}mm`);
+      document.documentElement.style.setProperty('--label-w', `${s.labelWidth}mm`);
+      document.documentElement.style.setProperty('--label-h', `${s.labelHeight}mm`);
+      document.documentElement.style.setProperty('--zone-w', `${s.printZoneWidth}mm`);
+      document.documentElement.style.setProperty('--zone-h', `${s.printZoneHeight}mm`);
+    }
+
+    function renderSheet() {
+      sheet.querySelectorAll('.label').forEach((node) => node.remove());
+      state.labels.forEach((_, index) => {
+        const label = createLabelElement(index, true);
+        label.addEventListener('click', () => focusEditor(index));
+        label.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            focusEditor(index);
+          }
+        });
+        sheet.append(label);
+        updateLabel(index);
+      });
+      sheet.classList.toggle('calibration', state.calibration);
+      fitAllText();
+    }
+
+    function createLabelElement(index, interactive) {
+      const s = state.settings;
+      const row = Math.floor(index / cols);
+      const col = index % cols;
+      const x = s.marginLeft + col * (s.labelWidth + s.gapX);
+      const y = s.marginTop + row * (s.labelHeight + s.gapY);
+      const label = document.createElement('div');
+      label.className = 'label';
+      label.dataset.index = String(index);
+      label.style.setProperty('--x', `${x}mm`);
+      label.style.setProperty('--y', `${y}mm`);
+
+      if (interactive) {
+        label.tabIndex = 0;
+        label.setAttribute('role', 'button');
+        label.setAttribute('aria-label', `Modifier l'étiquette ${index + 1}`);
+      }
+
+      const zone = document.createElement('span');
+      zone.className = 'print-zone';
+      const text = document.createElement('span');
+      text.className = 'label-text';
+      zone.append(text);
+      label.append(zone);
+      return label;
+    }
+
+    function renderPrintStack() {
+      printStack.innerHTML = '';
+      state.library.forEach((libraryLabel) => {
+        const printSheet = document.createElement('div');
+        printSheet.className = 'print-sheet';
+        for (let index = 0; index < labelsPerPage; index += 1) {
+          const label = createLabelElement(index, false);
+          renderLabelText(label.querySelector('.label-text'), libraryLabel);
+          printSheet.append(label);
+        }
+        printStack.append(printSheet);
+      });
+      fitAllText();
+    }
+
+    function updateLabel(index) {
+      const label = sheet.querySelector(`.label[data-index="${index}"] .label-text`);
+      if (!label) return;
+      renderLabelText(label, state.labels[index]);
+    }
+
+    function renderLabelText(label, rawValue) {
+      label.innerHTML = '';
+      const value = normalizeLabel(rawValue);
+      if (!value) return;
+
+      const lines = value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+      lines.forEach((line) => {
+        const textLine = document.createElement('span');
+        textLine.className = 'cable-line';
+        textLine.textContent = line;
+        label.append(textLine);
+      });
+    }
+
+    function fitAllText() {
+      requestAnimationFrame(() => {
+        sheet.querySelectorAll('.label-text').forEach((textEl) => {
+          fitText(textEl);
+        });
+      });
+    }
+
+    function fitText(textEl) {
+      const zone = textEl.closest('.print-zone');
+      if (!zone || !textEl.textContent.trim()) return;
+
+      const max = Number(state.settings.fontMax) || defaults.fontMax;
+      const min = Number(state.settings.fontMin) || defaults.fontMin;
+      let size = Math.max(min, max);
+      textEl.style.setProperty('--fit-size', `${size}pt`);
+
+      while (size > min && (textEl.scrollWidth > zone.clientWidth || textEl.scrollHeight > zone.clientHeight)) {
+        size = Math.max(min, size - 0.2);
+        textEl.style.setProperty('--fit-size', `${size.toFixed(1)}pt`);
+      }
+    }
+
+    function focusEditor(index) {
+      currentLabelInput.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      currentLabelInput.focus();
+      currentLabelInput.select();
+    }
+
+    function labelsToCsv() {
+      return state.library.map((value) => csvEscape(value)).join('\n');
+    }
+
+    function csvEscape(value) {
+      const text = String(value ?? '');
+      return /[;"\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    }
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let cell = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        const next = text[i + 1];
+        if (char === '"' && inQuotes && next === '"') {
+          cell += '"';
+          i += 1;
+        } else if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if ((char === ';' || char === ',') && !inQuotes) {
+          row.push(cell);
+          cell = '';
+        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+          if (char === '\r' && next === '\n') i += 1;
+          row.push(cell);
+          if (row.some((part) => part.trim())) rows.push(row);
+          row = [];
+          cell = '';
+        } else {
+          cell += char;
+        }
+      }
+
+      row.push(cell);
+      if (row.some((part) => part.trim())) rows.push(row);
+      return rows;
+    }
+
+    function importCsv(text) {
+      const rows = parseCsv(text);
+      const labels = rows.map((row) => normalizeLabel(row.join(' '))).filter(Boolean);
+      if (!labels.length) {
+        throw new Error('CSV vide: ajoutez au moins un libellé.');
+      }
+      state.library = uniqueLabels(labels);
+      state.currentLabel = state.library[0];
+      state.labels = Array.from({ length: labelsPerPage }, () => state.currentLabel);
+      renderAll();
+      setStatus(`${state.library.length} libellé(s) importé(s). Planche "${state.currentLabel}" prête.`);
+      saveLocal();
+    }
+
+    function downloadFile(name, mime, text) {
+      const blob = new Blob([text], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = name;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function saveProjectJson() {
+      const payload = {
+        type: 'kalyzee-cable-labels',
+        strategy: 'one-board-per-label',
+        version: 2,
+        savedAt: new Date().toISOString(),
+        settings: state.settings,
+        currentLabel: state.currentLabel,
+        library: state.library
+      };
+      downloadFile('etiquettes-cables-kalyzee.json', 'application/json;charset=utf-8', JSON.stringify(payload, null, 2));
+      setStatus('Projet JSON exporté.');
+    }
+
+    function saveSettingsJson() {
+      const payload = {
+        type: 'kalyzee-label-settings',
+        version: 1,
+        savedAt: new Date().toISOString(),
+        settings: state.settings
+      };
+      downloadFile('reglages-etiquettes-kalyzee.json', 'application/json;charset=utf-8', JSON.stringify(payload, null, 2));
+      setStatus('Réglages physiques exportés.');
+    }
+
+    function loadSettingsJson(text) {
+      const payload = JSON.parse(text);
+      const source = payload?.settings || payload;
+      const nextSettings = { ...state.settings };
+      let changed = 0;
+
+      settingFields.forEach(([key]) => {
+        const value = Number(source?.[key]);
+        if (Number.isFinite(value)) {
+          nextSettings[key] = value;
+          changed += 1;
+        }
+      });
+
+      if (!changed) {
+        throw new Error('JSON de réglages non reconnu.');
+      }
+
+      state.settings = nextSettings;
+      renderAll();
+      setStatus(`${changed} réglage(s) chargé(s).`);
+      saveLocal();
+    }
+
+    function loadProjectJson(text) {
+      const payload = JSON.parse(text);
+      if (payload?.type === 'kalyzee-label-settings') {
+        loadSettingsJson(text);
+        return;
+      }
+      if (!payload || (!Array.isArray(payload.library) && !Array.isArray(payload.labels))) {
+        throw new Error('JSON non reconnu.');
+      }
+      state.settings = { ...defaults, ...(payload.settings || {}) };
+      state.library = labelsFromPayload(payload);
+      if (!state.library.length) state.library = [...defaultCableLabels];
+      state.currentLabel = normalizeLabel(payload.currentLabel) || state.library[0];
+      if (!state.library.includes(state.currentLabel)) state.currentLabel = state.library[0];
+      state.labels = Array.from({ length: labelsPerPage }, () => state.currentLabel);
+      renderAll();
+      setStatus('Projet JSON chargé.');
+      saveLocal();
+    }
+
+    function saveLocal() {
+      localStorage.setItem('kalyzee-labels-project', JSON.stringify({
+        settings: state.settings,
+        library: state.library,
+        currentLabel: state.currentLabel,
+        calibration: state.calibration
+      }));
+    }
+
+    function loadLocal() {
+      const raw = localStorage.getItem('kalyzee-labels-project');
+      if (!raw) return false;
+      try {
+        const payload = JSON.parse(raw);
+        state.settings = { ...defaults, ...(payload.settings || {}) };
+        state.library = labelsFromPayload(payload);
+        if (!state.library.length) state.library = [...defaultCableLabels];
+        state.currentLabel = normalizeLabel(payload.currentLabel) || state.library[0];
+        if (!state.library.includes(state.currentLabel)) state.currentLabel = state.library[0];
+        state.labels = Array.from({ length: labelsPerPage }, () => state.currentLabel);
+        state.calibration = payload.calibration !== false;
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function resetSettings() {
+      state.settings = { ...defaults };
+      renderAll();
+      setStatus('Réglages physiques réinitialisés.');
+      saveLocal();
+    }
+
+    function resetLibrary() {
+      state.library = [...defaultCableLabels];
+      state.currentLabel = state.library[0];
+      state.labels = Array.from({ length: labelsPerPage }, () => state.currentLabel);
+      renderAll();
+      setStatus('Bibliothèque par défaut restaurée.');
+      saveLocal();
+    }
+
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message;
+      statusEl.classList.toggle('error', isError);
+    }
+
+    function renderAll() {
+      applySettings();
+      renderSettings();
+      renderBoardControls();
+      renderSheet();
+      renderPrintStack();
+      document.getElementById('calibrationButton').setAttribute('aria-pressed', String(state.calibration));
+    }
+
+    document.getElementById('printButton').addEventListener('click', () => {
+      document.body.classList.remove('print-all');
+      document.body.classList.toggle('print-calibration', state.calibration);
+      fitAllText();
+      setStatus(state.calibration ? 'Impression avec limites de calibration.' : 'Impression texte seul.');
+      setTimeout(() => window.print(), 60);
+    });
+
+    document.getElementById('printAllButton').addEventListener('click', () => {
+      renderPrintStack();
+      document.body.classList.add('print-all');
+      document.body.classList.toggle('print-calibration', state.calibration);
+      setStatus(`${state.library.length} planche(s) prêtes pour l'impression${state.calibration ? ' avec limites.' : '.'}`);
+      setTimeout(() => window.print(), 80);
+    });
+
+    document.getElementById('calibrationButton').addEventListener('click', () => {
+      state.calibration = !state.calibration;
+      sheet.classList.toggle('calibration', state.calibration);
+      document.getElementById('calibrationButton').setAttribute('aria-pressed', String(state.calibration));
+      setStatus(state.calibration ? 'Repères de calibration visibles à l’écran.' : 'Aperçu texte seul à l’écran.');
+      saveLocal();
+    });
+
+    labelPreset.addEventListener('change', () => {
+      const selected = state.library[Number(labelPreset.value)];
+      if (typeof selected === 'string') {
+        fillBoard(selected, `Planche "${selected}" prête.`);
+      }
+    });
+
+    currentLabelInput.addEventListener('input', () => {
+      state.currentLabel = normalizeLabel(currentLabelInput.value);
+      state.labels = Array.from({ length: labelsPerPage }, () => state.currentLabel);
+      renderSheet();
+      saveLocal();
+    });
+
+    document.getElementById('fillBoardButton').addEventListener('click', () => {
+      const label = normalizeLabel(currentLabelInput.value);
+      if (!label) {
+        setStatus('Saisissez un libellé avant de remplir la planche.', true);
+        return;
+      }
+      if (!state.library.includes(label)) {
+        state.library.push(label);
+      }
+      fillBoard(label);
+    });
+
+    document.getElementById('nextLabelButton').addEventListener('click', () => {
+      if (!state.library.length) return;
+      const nextIndex = (currentLibraryIndex() + 1) % state.library.length;
+      fillBoard(state.library[nextIndex], `Planche suivante: "${state.library[nextIndex]}".`);
+    });
+
+    document.getElementById('applyLibraryButton').addEventListener('click', () => {
+      const labels = uniqueLabels(libraryText.value.split(/\r?\n/));
+      if (!labels.length) {
+        setStatus('La bibliothèque doit contenir au moins un libellé.', true);
+        return;
+      }
+      state.library = labels;
+      state.currentLabel = state.library.includes(state.currentLabel) ? state.currentLabel : state.library[0];
+      state.labels = Array.from({ length: labelsPerPage }, () => state.currentLabel);
+      renderAll();
+      setStatus(`${state.library.length} libellé(s) dans la bibliothèque.`);
+      saveLocal();
+    });
+
+    document.getElementById('resetLibraryButton').addEventListener('click', resetLibrary);
+
+    document.getElementById('resetSettingsButton').addEventListener('click', resetSettings);
+
+    document.getElementById('saveSettingsButton').addEventListener('click', () => {
+      saveLocal();
+      setStatus('Réglages mémorisés dans ce navigateur.');
+    });
+
+    document.getElementById('exportSettingsButton').addEventListener('click', saveSettingsJson);
+
+    document.getElementById('exportCsvButton').addEventListener('click', () => {
+      const csv = labelsToCsv();
+      document.getElementById('csvText').value = csv;
+      downloadFile('etiquettes-cables-kalyzee.csv', 'text/csv;charset=utf-8', csv);
+      setStatus('CSV exporté.');
+    });
+
+    document.getElementById('saveJsonButton').addEventListener('click', saveProjectJson);
+
+    document.getElementById('copyCsvButton').addEventListener('click', async () => {
+      const csv = labelsToCsv();
+      document.getElementById('csvText').value = csv;
+      try {
+        await navigator.clipboard.writeText(csv);
+        setStatus('CSV copié.');
+      } catch {
+        setStatus('CSV préparé dans la zone de texte.', true);
+      }
+    });
+
+    document.getElementById('importCsvTextButton').addEventListener('click', () => {
+      try {
+        importCsv(document.getElementById('csvText').value);
+      } catch (error) {
+        setStatus(error.message, true);
+      }
+    });
+
+    document.getElementById('settingsFileInput').addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        loadSettingsJson(await file.text());
+      } catch (error) {
+        setStatus(error.message || 'Impossible de charger les réglages.', true);
+      } finally {
+        event.target.value = '';
+      }
+    });
+
+    document.getElementById('fileInput').addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        if (file.name.toLowerCase().endsWith('.json')) {
+          loadProjectJson(text);
+        } else {
+          importCsv(text);
+        }
+      } catch (error) {
+        setStatus(error.message || 'Impossible de lire le fichier.', true);
+      } finally {
+        event.target.value = '';
+      }
+    });
+
+    window.addEventListener('beforeprint', fitAllText);
+    window.addEventListener('afterprint', () => {
+      document.body.classList.remove('print-all');
+      document.body.classList.remove('print-calibration');
+    });
+    window.addEventListener('resize', fitAllText);
+
+    if (!loadLocal()) {
+      fillBoard(defaultCableLabels[0], 'Planche par défaut prête.');
+    } else {
+      renderAll();
+      setStatus('Projet local restauré.');
+    }
+  </script>
+</body>
+</html>
